@@ -15,11 +15,10 @@
  */
 package io.kahu.hawaii.util.call.http;
 
-import io.kahu.hawaii.util.call.RequestContext;
 import io.kahu.hawaii.util.call.ResponseHandler;
+import io.kahu.hawaii.util.call.configuration.RequestConfiguration;
 import io.kahu.hawaii.util.call.dispatch.RequestDispatcher;
 import io.kahu.hawaii.util.call.log.CallLogger;
-
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpPost;
@@ -27,10 +26,10 @@ import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
 
 public class SoapRequest<T> extends AbortableHttpRequest<T> {
-    public SoapRequest(RequestDispatcher requestDispatcher, RequestContext<T> context, String url, String content, String soapAction,
-            ResponseHandler<HttpResponse, T> responseHandler, CallLogger<T> logger) {
+    public SoapRequest(RequestDispatcher requestDispatcher, RequestConfiguration<T> configuration, String url, String content, String soapAction,
+                       ResponseHandler<HttpResponse, T> responseHandler, CallLogger<T> logger) {
 
-        super(requestDispatcher, context, responseHandler, new HttpPost(url), logger);
+        super(requestDispatcher, configuration, responseHandler, new HttpPost(url), logger);
 
         HttpEntity httpEntity = new StringEntity(content, ContentType.create("text/xml", "UTF-8"));
         getHttpRequest().setHeader("Content-Type", "text/xml;charset=UTF-8");

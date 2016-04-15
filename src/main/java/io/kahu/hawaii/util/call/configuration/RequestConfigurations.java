@@ -23,16 +23,22 @@ import org.jolokia.jmx.JsonMBean;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Supplier;
 
 @JsonMBean
 public class RequestConfigurations {
     private final Map<RequestName, RequestConfiguration> configurations = new HashMap<>();
 
-    public RequestConfiguration get(RequestName key) {
-        RequestConfiguration configuration = configurations.get(key);
+    public RequestConfiguration get(RequestName requestName) {
+        return get(requestName, () -> new RequestConfiguration(requestName));
+
+    }
+
+    public <T extends RequestConfiguration> T get(RequestName requestName, Supplier<T> supplier) {
+        T configuration = (T) configurations.get(requestName);
         if (configuration == null) {
-            configuration = new RequestConfiguration(key);
-            configurations.put(key, configuration);
+            configuration = supplier.get();
+            configurations.put(requestName, configuration);
         }
         return configuration;
     }
@@ -49,4 +55,5 @@ public class RequestConfigurations {
         HttpRequestConfiguration configuration = (HttpRequestConfiguration) get(new RequestName(system, method));
         configuration.setBaseUrl(url);
     }
+
 }

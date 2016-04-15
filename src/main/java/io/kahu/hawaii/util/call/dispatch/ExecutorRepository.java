@@ -90,7 +90,7 @@ public class ExecutorRepository {
         if (executor == null) {
             // The configured (in the request) executor does not exist (or is empty).
             // Get the external configuration and add the configuration to the request
-            configuration = requestConfigurations.get(request.getCallName());
+            configuration = requestConfigurations.get(configuration.getRequestName());
             executor = executors.get(configuration.getExecutorName());
 
             if (executor == null) {

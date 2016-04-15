@@ -31,11 +31,8 @@ import java.util.concurrent.FutureTask;
 public abstract class AbstractAbortableRequest<F, T> implements Request<T>, AbortableRequest<T> {
     private final RequestDispatcher requestDispatcher;
     private final ResponseHandler<F, T> responseHandler;
-    private final RequestName requestName;
     private RequestConfiguration<T> configuration;
 
-//    private final RequestContext<T> context;
-//
     private RequestStatistic statistic;
     private ResponseCallback<T> callback;
     private final CallLogger<T> logger;
@@ -48,24 +45,36 @@ public abstract class AbstractAbortableRequest<F, T> implements Request<T>, Abor
 
     public AbstractAbortableRequest(RequestPrototype<F, T>  prototype) {
         this.requestDispatcher = prototype.getRequestDispatcher();
-        this.configuration = prototype.getRequestName();
+        this.configuration = prototype.getConfiguration();
         this.responseHandler = prototype.getResponseHandler();
         this.logger = prototype.getLogger();
     }
 
+    @Deprecated
     public AbstractAbortableRequest(RequestDispatcher requestDispatcher, RequestName requestName, ResponseHandler<F, T> responseHandler, CallLogger<T> logger) {
         this.requestDispatcher = requestDispatcher;
-        this.requestName = requestName;
+        this.configuration = new RequestConfiguration(requestName);
         this.responseHandler = responseHandler;
         this.logger = logger;
     }
 
+    @Deprecated
     public AbstractAbortableRequest(RequestDispatcher requestDispatcher, RequestContext<T> context, ResponseHandler<F, T> responseHandler, CallLogger<T> logger) {
         this.requestDispatcher = requestDispatcher;
-        this.requestName = new RequestName(context.getBackendSystem(), context.getMethodName());
+        this.configuration = new RequestConfiguration(new RequestName(context.getBackendSystem(), context.getMethodName()));
+        this.responseHandler = responseHandler;
+        this.logger = logger;
+
+        configuration.setTimeOut(context.getTimeOut());
+    }
+
+    public AbstractAbortableRequest(RequestDispatcher requestDispatcher, RequestConfiguration<T> configuration, ResponseHandler<F, T> responseHandler, CallLogger<T> logger) {
+        this.requestDispatcher = requestDispatcher;
+        this.configuration = configuration;
         this.responseHandler = responseHandler;
         this.logger = logger;
     }
+
 
     @Override
     public void setCallback(ResponseCallback<T> callback) {
@@ -195,7 +204,7 @@ public abstract class AbstractAbortableRequest<F, T> implements Request<T>, Abor
 
     @Override
     public String getCallName() {
-        return requestName.toString();
+        return configuration.getRequestName().toString();
     }
 
     @Override

@@ -16,6 +16,7 @@
 package io.kahu.hawaii.util.call.http;
 
 import io.kahu.hawaii.util.call.*;
+import io.kahu.hawaii.util.call.configuration.RequestConfiguration;
 import io.kahu.hawaii.util.call.dispatch.RequestDispatcher;
 import io.kahu.hawaii.util.call.log.CallLogger;
 import io.kahu.hawaii.util.exception.ServerError;
@@ -41,9 +42,9 @@ public class AbortableHttpRequest<T> extends AbstractAbortableRequest<HttpRespon
     private final HttpRequestBase httpRequest;
     private final HttpClientContext httpClientContext;
 
-    public AbortableHttpRequest(RequestDispatcher requestDispatcher, RequestContext<T> context, ResponseHandler<HttpResponse, T> responseHandler,
-            HttpRequestBase httpRequest, CallLogger<T> logger) {
-        super(requestDispatcher, context, responseHandler, logger);
+    public AbortableHttpRequest(RequestDispatcher requestDispatcher, RequestConfiguration<T> configuration, ResponseHandler<HttpResponse, T> responseHandler,
+                                HttpRequestBase httpRequest, CallLogger<T> logger) {
+        super(requestDispatcher, configuration, responseHandler, logger);
         this.httpRequest = httpRequest;
         this.httpClientContext = HttpClientContext.create();
     }

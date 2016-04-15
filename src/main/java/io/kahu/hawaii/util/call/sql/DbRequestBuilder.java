@@ -17,7 +17,9 @@ package io.kahu.hawaii.util.call.sql;
 
 import io.kahu.hawaii.util.call.Request;
 import io.kahu.hawaii.util.call.RequestBuilder;
+import io.kahu.hawaii.util.call.RequestName;
 import io.kahu.hawaii.util.call.ResponseCallback;
+import io.kahu.hawaii.util.call.configuration.RequestConfiguration;
 import io.kahu.hawaii.util.exception.ServerError;
 import io.kahu.hawaii.util.exception.ServerException;
 import org.apache.commons.lang3.StringUtils;
@@ -96,5 +98,16 @@ public class DbRequestBuilder<T> implements RequestBuilder<T> {
         request.setCallback(callback);
 
         return request;
+    }
+
+    @Override
+    public RequestName getRequestName() {
+        return prototype.getConfiguration().getRequestName();
+    }
+
+    @Override
+    public void updateRequestConfiguration(RequestConfiguration<T> configuration) {
+        configuration.updateFrom(prototype.getConfiguration());
+        prototype.setConfiguration(configuration);
     }
 }

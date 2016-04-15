@@ -78,10 +78,18 @@ public class RequestConfiguration<T> {
     }
 
     public void updateFrom(RequestConfiguration<T> configuration) {
-        this.setTimeOut(configuration.getTimeOut());
-        this.setExecutorName(configuration.getExecutorName());
-        this.setTimeOutResponse(configuration.getTimeOutResponse());
-        this.setRejectResponse(configuration.getRejectResponse());
+        if (configuration.getTimeOut() != null) {
+            this.setTimeOut(configuration.getTimeOut());
+        }
+        if (configuration.getExecutorName() != null) {
+            this.setExecutorName(configuration.getExecutorName());
+        }
+        if (configuration.getTimeOutResponse() != null) {
+            this.setTimeOutResponse(configuration.getTimeOutResponse());
+        }
+        if (configuration.getRejectResponse() != null) {
+            this.setRejectResponse(configuration.getRejectResponse());
+        }
     }
 
 }

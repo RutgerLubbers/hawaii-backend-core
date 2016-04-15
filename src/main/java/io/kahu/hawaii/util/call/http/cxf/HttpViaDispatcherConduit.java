@@ -15,7 +15,8 @@
  */
 package io.kahu.hawaii.util.call.http.cxf;
 
-import io.kahu.hawaii.util.call.configuration.RequestConfiguration;
+import io.kahu.hawaii.util.call.RequestName;
+import io.kahu.hawaii.util.call.TimeOut;
 import io.kahu.hawaii.util.call.configuration.RequestConfigurations;
 import io.kahu.hawaii.util.call.dispatch.RequestDispatcher;
 import io.kahu.hawaii.util.call.http.HttpMethod;
@@ -27,14 +28,6 @@ import io.kahu.hawaii.util.call.log.request.HttpRequestLogger;
 import io.kahu.hawaii.util.call.log.response.SoapResponseLogger;
 import io.kahu.hawaii.util.exception.ServerException;
 import io.kahu.hawaii.util.logger.LogManager;
-
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.util.logging.Logger;
-
 import org.apache.cxf.Bus;
 import org.apache.cxf.binding.soap.interceptor.SoapActionInInterceptor;
 import org.apache.cxf.message.ExchangeImpl;
@@ -46,6 +39,10 @@ import org.apache.cxf.transport.Conduit;
 import org.apache.cxf.transport.MessageObserver;
 import org.apache.cxf.ws.addressing.EndpointReferenceType;
 import org.apache.http.impl.client.HttpClientBuilder;
+
+import java.io.*;
+import java.util.concurrent.TimeUnit;
+import java.util.logging.Logger;
 
 public class HttpViaDispatcherConduit extends AbstractConduit implements Conduit {
     private static final HttpClientBuilder HTTP_CLIENT_BUILDER = HttpClientBuilder.create().disableContentCompression();
@@ -115,16 +112,16 @@ public class HttpViaDispatcherConduit extends AbstractConduit implements Conduit
                     methodName = callType.substring(p + 1);
                 }
             }
+            RequestName requestName = new RequestName(systemName, methodName);
 
-            HttpRequestConfiguration<String> context = new HttpRequestConfiguration<>(HttpMethod.POST, baseUrl, path, systemName, methodName, 20);
+            HttpRequestConfiguration<String> configuration = new HttpRequestConfiguration<>(HttpMethod.POST, baseUrl, path, requestName, new TimeOut(20, TimeUnit.SECONDS));
+            configuration.updateFrom(requestConfigurations.get(requestName));
 
-            SoapRequest<String> soapRequest = new SoapRequest<>(requestDispatcher, context, url, soapMessage, soapAction, new SoapResponseHandler(),
+            SoapRequest<String> soapRequest = new SoapRequest<>(requestDispatcher, configuration, url, soapMessage, soapAction, new SoapResponseHandler(),
                     new CallLoggerImpl<>(logManager, new HttpRequestLogger(), new SoapResponseLogger()));
 
             soapRequest.setHttpClientBuilder(HTTP_CLIENT_BUILDER);
 
-            RequestConfiguration configuration = requestConfigurations.get(context.toString());
-            context.setConfiguration(configuration);
 
             try {
                 String result = soapRequest.execute().get();

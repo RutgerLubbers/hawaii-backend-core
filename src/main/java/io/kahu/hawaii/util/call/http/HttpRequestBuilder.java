@@ -318,7 +318,7 @@ public class HttpRequestBuilder<T> implements RequestBuilder<T> {
     }
 
     public void updateRequestConfiguration(RequestConfiguration<T> configuration) {
-        prototype.getConfiguration().setTimeOut(configuration.);
+        configuration.updateFrom(prototype.getConfiguration());
         prototype.setConfiguration(configuration);
     }
 

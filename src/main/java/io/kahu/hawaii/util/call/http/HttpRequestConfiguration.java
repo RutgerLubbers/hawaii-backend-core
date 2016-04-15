@@ -22,7 +22,7 @@ import io.kahu.hawaii.util.call.configuration.RequestConfiguration;
 import java.util.concurrent.TimeUnit;
 
 public class HttpRequestConfiguration<T> extends RequestConfiguration<T> {
-    private final HttpMethod method;
+    private HttpMethod method;
     private String baseUrl;
     private String path;
 
@@ -30,6 +30,8 @@ public class HttpRequestConfiguration<T> extends RequestConfiguration<T> {
     public HttpRequestConfiguration(HttpMethod method, String baseUrl, String path, String backendSystem, String methodName, int timeOut) {
         this(method, baseUrl, path, backendSystem, methodName, new TimeOut(timeOut, TimeUnit.SECONDS));
     }
+
+    @Deprecated
     public HttpRequestConfiguration(HttpMethod method, String baseUrl, String path, String backendSystem, String methodName, TimeOut timeOut) {
         this(method, baseUrl, path, new RequestName(backendSystem, methodName), timeOut);
     }
@@ -41,6 +43,11 @@ public class HttpRequestConfiguration<T> extends RequestConfiguration<T> {
         this.baseUrl = baseUrl;
         this.path = path;
     }
+
+    public HttpRequestConfiguration(RequestName requestName) {
+        super(requestName);
+    }
+
     public String getBaseUrl() {
         return baseUrl;
     }
@@ -61,4 +68,16 @@ public class HttpRequestConfiguration<T> extends RequestConfiguration<T> {
         this.path = path;
     }
 
+    public void updateFrom(HttpRequestConfiguration configuration) {
+        if (configuration.getBaseUrl() != null) {
+            this.setBaseUrl(configuration.getBaseUrl());
+        }
+        if (configuration.getMethod() != null) {
+            this.method = configuration.getMethod();
+        }
+        if (configuration.getPath() != null) {
+            this.path = configuration.getPath();
+        }
+        super.updateFrom(configuration);
+    }
 }

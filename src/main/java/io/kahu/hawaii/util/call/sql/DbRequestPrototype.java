@@ -15,9 +15,9 @@
  */
 package io.kahu.hawaii.util.call.sql;
 
-import io.kahu.hawaii.util.call.RequestContext;
 import io.kahu.hawaii.util.call.RequestPrototype;
 import io.kahu.hawaii.util.call.ResponseHandler;
+import io.kahu.hawaii.util.call.configuration.RequestConfiguration;
 import io.kahu.hawaii.util.call.dispatch.RequestDispatcher;
 import io.kahu.hawaii.util.call.log.CallLogger;
 import org.apache.http.annotation.NotThreadSafe;
@@ -33,13 +33,13 @@ public class DbRequestPrototype<T> extends RequestPrototype<ResultSet, T> {
 
     private final DbCallType callType;
 
-    public DbRequestPrototype(RequestDispatcher requestDispatcher, RequestContext<T> context, ResponseHandler<ResultSet, T> responseHandler, CallLogger<T> logger,  DataSource dataSource, DbCallType callType, String sql) {
-        this(requestDispatcher, context, responseHandler, logger, dataSource, callType);
+    public DbRequestPrototype(RequestDispatcher requestDispatcher, RequestConfiguration<T> configuration, ResponseHandler<ResultSet, T> responseHandler, CallLogger<T> logger, DataSource dataSource, DbCallType callType, String sql) {
+        this(requestDispatcher, configuration, responseHandler, logger, dataSource, callType);
         this.sql = sql;
     }
 
-    public DbRequestPrototype(RequestDispatcher requestDispatcher, RequestContext<T> context, ResponseHandler<ResultSet, T> responseHandler, CallLogger<T> logger,  DataSource dataSource, DbCallType callType) {
-        super(requestDispatcher, context, responseHandler, logger);
+    public DbRequestPrototype(RequestDispatcher requestDispatcher, RequestConfiguration<T> configuration, ResponseHandler<ResultSet, T> responseHandler, CallLogger<T> logger,  DataSource dataSource, DbCallType callType) {
+        super(requestDispatcher, configuration, responseHandler, logger);
         this.dataSource = dataSource;
         this.callType = callType;
     }

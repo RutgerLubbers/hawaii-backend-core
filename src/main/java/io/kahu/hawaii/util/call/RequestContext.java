@@ -37,7 +37,7 @@ public class RequestContext<T> {
     public RequestContext(String backendSystem, String methodName) {
         this.backendSystem = backendSystem;
         this.methodName = methodName;
-        configuration = new RequestConfiguration();
+        configuration = new RequestConfiguration(new RequestName(backendSystem, methodName));
     }
 
     public RequestContext(String backendSystem, String methodName, int timeOut) {

@@ -143,15 +143,10 @@ public class DispatcherConfigurator implements ApplicationListener<ContextRefres
     public void onApplicationEvent(ContextRefreshedEvent event) {
         Collection<HttpRequestBuilder> beans = ApplicationContextProvider.getBeans(HttpRequestBuilder.class);
         for (HttpRequestBuilder builder : beans) {
-            builder.getRequestName();
-            RequestConfiguration requestConfiguration = requestConfigurations.get(builder.getRequestName());
-            if (requestConfiguration != null) {
-                builder.updateRequestConfiguration(requestConfiguration);
-                logManager.debug(CoreLoggers.SERVER,
+            HttpRequestConfiguration requestConfiguration = requestConfigurations.get(builder.getRequestName(), () -> new HttpRequestConfiguration(builder.getRequestName()));
+            builder.updateRequestConfiguration(requestConfiguration);
+            logManager.debug(CoreLoggers.SERVER,
                         "Configuring call '" + requestConfiguration.getRequestName() + "' to use '" + requestConfiguration.getExecutorName() + "' with timeout '" + requestConfiguration.getTimeOut() + "'.");
-            } else {
-                requestConfigurations.
-            }
         }
     }
 
