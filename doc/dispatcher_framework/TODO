@@ -64,7 +64,7 @@
 
 [X] Ensure request always returns an answer (i.e. response status is set).
 
-[ ] AbstractHttpResponseHanlder - Create method to accept / reject a statusline (200 , 400 , ....)
+[X] AbstractHttpResponseHanlder - Create method to accept / reject a statusline (200 , 400 , ....)
 
 === Todo (incompatible with 1.0) ====
 [ ] executorRepository should have an 'async pool'

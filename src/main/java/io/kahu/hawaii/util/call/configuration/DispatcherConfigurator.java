@@ -16,10 +16,12 @@
 package io.kahu.hawaii.util.call.configuration;
 
 import io.kahu.hawaii.util.call.RequestContext;
+import io.kahu.hawaii.util.call.RequestName;
 import io.kahu.hawaii.util.call.TimeOut;
 import io.kahu.hawaii.util.call.dispatch.ExecutorRepository;
 import io.kahu.hawaii.util.call.dispatch.HawaiiExecutorImpl;
 import io.kahu.hawaii.util.call.http.HttpRequestBuilder;
+import io.kahu.hawaii.util.call.http.HttpRequestConfiguration;
 import io.kahu.hawaii.util.logger.CoreLoggers;
 import io.kahu.hawaii.util.logger.LogManager;
 import io.kahu.hawaii.util.spring.ApplicationContextProvider;
@@ -110,8 +112,7 @@ public class DispatcherConfigurator implements ApplicationListener<ContextRefres
                     assert executors.containsKey(queue) : "The configured queue '" + queue + "' does not exist.";
                 }
 
-                String lookup = createLookup(systemName, method);
-                RequestConfiguration configuration = requestConfigurations.get(lookup);
+                RequestConfiguration configuration = requestConfigurations.get(new RequestName(systemName, method));
                 if (StringUtils.isNotBlank(defaultQueue)) {
                     configuration.setExecutorName(defaultQueue);
                 }
@@ -142,14 +143,15 @@ public class DispatcherConfigurator implements ApplicationListener<ContextRefres
     public void onApplicationEvent(ContextRefreshedEvent event) {
         Collection<HttpRequestBuilder> beans = ApplicationContextProvider.getBeans(HttpRequestBuilder.class);
         for (HttpRequestBuilder builder : beans) {
-            RequestContext requestContext = builder.getRequestContext();
-            String lookup = createLookup(requestContext.getBackendSystem(), requestContext.getMethodName());
-
-            RequestConfiguration requestConfiguration = requestConfigurations.get(lookup);
-            requestContext.setConfiguration(requestConfiguration);
-            requestConfiguration.setContext(requestContext);
-            logManager.debug(CoreLoggers.SERVER,
-                    "Configuring call '" + lookup + "' to use '" + requestContext.getExecutorName() + "' with timeout '" + requestContext.getTimeOut() + "'.");
+            builder.getRequestName();
+            RequestConfiguration requestConfiguration = requestConfigurations.get(builder.getRequestName());
+            if (requestConfiguration != null) {
+                builder.updateRequestConfiguration(requestConfiguration);
+                logManager.debug(CoreLoggers.SERVER,
+                        "Configuring call '" + requestConfiguration.getRequestName() + "' to use '" + requestConfiguration.getExecutorName() + "' with timeout '" + requestConfiguration.getTimeOut() + "'.");
+            } else {
+                requestConfigurations.
+            }
         }
     }
 

@@ -118,7 +118,7 @@ public class RequestDispatcher {
             /*
              * Block until data is retrieved, but with a time out.
              */
-            TimeOut timeOut = request.getTimeOut();
+            TimeOut timeOut = request.getConfiguration().getTimeOut();
             task.get(timeOut.getDuration(), timeOut.getUnit());
 
         } catch (RejectedExecutionException e) {

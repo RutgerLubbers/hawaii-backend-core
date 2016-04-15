@@ -15,6 +15,7 @@
  */
 package io.kahu.hawaii.util.call;
 
+import io.kahu.hawaii.util.call.configuration.RequestConfiguration;
 import io.kahu.hawaii.util.exception.ServerException;
 
 public interface RequestBuilder<T> {
@@ -22,4 +23,8 @@ public interface RequestBuilder<T> {
     RequestBuilder<T> newInstance() throws ServerException;
 
     Request<T> build() throws ServerException;
+
+    RequestName getRequestName();
+
+    void updateRequestConfiguration(RequestConfiguration<T> configuration);
 }

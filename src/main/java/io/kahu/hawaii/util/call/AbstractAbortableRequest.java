@@ -15,6 +15,7 @@
  */
 package io.kahu.hawaii.util.call;
 
+import io.kahu.hawaii.util.call.configuration.RequestConfiguration;
 import io.kahu.hawaii.util.call.dispatch.RequestDispatcher;
 import io.kahu.hawaii.util.call.log.CallLogger;
 import io.kahu.hawaii.util.call.statistics.QueueStatistic;
@@ -30,8 +31,11 @@ import java.util.concurrent.FutureTask;
 public abstract class AbstractAbortableRequest<F, T> implements Request<T>, AbortableRequest<T> {
     private final RequestDispatcher requestDispatcher;
     private final ResponseHandler<F, T> responseHandler;
-    private final RequestContext<T> context;
+    private final RequestName requestName;
+    private RequestConfiguration<T> configuration;
 
+//    private final RequestContext<T> context;
+//
     private RequestStatistic statistic;
     private ResponseCallback<T> callback;
     private final CallLogger<T> logger;
@@ -44,14 +48,21 @@ public abstract class AbstractAbortableRequest<F, T> implements Request<T>, Abor
 
     public AbstractAbortableRequest(RequestPrototype<F, T>  prototype) {
         this.requestDispatcher = prototype.getRequestDispatcher();
-        this.context = prototype.getContext();
+        this.configuration = prototype.getRequestName();
         this.responseHandler = prototype.getResponseHandler();
         this.logger = prototype.getLogger();
     }
 
+    public AbstractAbortableRequest(RequestDispatcher requestDispatcher, RequestName requestName, ResponseHandler<F, T> responseHandler, CallLogger<T> logger) {
+        this.requestDispatcher = requestDispatcher;
+        this.requestName = requestName;
+        this.responseHandler = responseHandler;
+        this.logger = logger;
+    }
+
     public AbstractAbortableRequest(RequestDispatcher requestDispatcher, RequestContext<T> context, ResponseHandler<F, T> responseHandler, CallLogger<T> logger) {
         this.requestDispatcher = requestDispatcher;
-        this.context = context;
+        this.requestName = new RequestName(context.getBackendSystem(), context.getMethodName());
         this.responseHandler = responseHandler;
         this.logger = logger;
     }
@@ -65,7 +76,7 @@ public abstract class AbstractAbortableRequest<F, T> implements Request<T>, Abor
     public void abort() {
         this.error = true;
         statistic.endBackendRequest();
-        response.set(ResponseStatus.TIME_OUT, getContext().getTimeOutResponse(), "Request '" + getId() + "' timed out.");
+        response.set(ResponseStatus.TIME_OUT, getConfiguration().getTimeOutResponse(), "Request '" + getId() + "' timed out.");
         abortInternally();
     }
 
@@ -126,12 +137,7 @@ public abstract class AbstractAbortableRequest<F, T> implements Request<T>, Abor
 
     @Override
     public String toString() {
-        return getContext().toString();
-    }
-
-    @Override
-    public RequestContext<T> getContext() {
-        return context;
+        return getCallName();
     }
 
     @Override
@@ -172,7 +178,7 @@ public abstract class AbstractAbortableRequest<F, T> implements Request<T>, Abor
     @Override
     public void reject() {
         this.error = true;
-        response.set(ResponseStatus.TOO_BUSY, getContext().getRejectResponse(), "Request '" + getId() + "' rejected, too busy.");
+        response.set(ResponseStatus.TOO_BUSY, getConfiguration().getRejectResponse(), "Request '" + getId() + "' rejected, too busy.");
         rejectInternally();
     }
 
@@ -189,7 +195,7 @@ public abstract class AbstractAbortableRequest<F, T> implements Request<T>, Abor
 
     @Override
     public String getCallName() {
-        return context.toString();
+        return requestName.toString();
     }
 
     @Override
@@ -200,11 +206,6 @@ public abstract class AbstractAbortableRequest<F, T> implements Request<T>, Abor
     @Override
     public boolean isAsync() {
         return isAsync;
-    }
-
-    @Override
-    public TimeOut getTimeOut() {
-        return getContext().getTimeOut();
     }
 
     private void logResponse() {
@@ -224,4 +225,13 @@ public abstract class AbstractAbortableRequest<F, T> implements Request<T>, Abor
     protected void setResponse(Response<T> response) {
         this.response = response;
     }
+
+    public RequestConfiguration<T> getConfiguration() {
+        return configuration;
+    }
+
+    public void setConfiguration(RequestConfiguration<T> configuration) {
+        this.configuration = configuration;
+    }
+
 }

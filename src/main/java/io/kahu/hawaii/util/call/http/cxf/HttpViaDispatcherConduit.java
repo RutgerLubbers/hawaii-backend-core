@@ -19,7 +19,7 @@ import io.kahu.hawaii.util.call.configuration.RequestConfiguration;
 import io.kahu.hawaii.util.call.configuration.RequestConfigurations;
 import io.kahu.hawaii.util.call.dispatch.RequestDispatcher;
 import io.kahu.hawaii.util.call.http.HttpMethod;
-import io.kahu.hawaii.util.call.http.HttpRequestContext;
+import io.kahu.hawaii.util.call.http.HttpRequestConfiguration;
 import io.kahu.hawaii.util.call.http.SoapRequest;
 import io.kahu.hawaii.util.call.http.response.SoapResponseHandler;
 import io.kahu.hawaii.util.call.log.CallLoggerImpl;
@@ -116,7 +116,7 @@ public class HttpViaDispatcherConduit extends AbstractConduit implements Conduit
                 }
             }
 
-            HttpRequestContext<String> context = new HttpRequestContext<>(HttpMethod.POST, baseUrl, path, systemName, methodName, 20);
+            HttpRequestConfiguration<String> context = new HttpRequestConfiguration<>(HttpMethod.POST, baseUrl, path, systemName, methodName, 20);
 
             SoapRequest<String> soapRequest = new SoapRequest<>(requestDispatcher, context, url, soapMessage, soapAction, new SoapResponseHandler(),
                     new CallLoggerImpl<>(logManager, new HttpRequestLogger(), new SoapResponseLogger()));

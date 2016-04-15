@@ -27,7 +27,7 @@ import io.kahu.hawaii.util.call.example.handler.GetCustomerByIdResponseHandler;
 import io.kahu.hawaii.util.call.example.service.RestServer;
 import io.kahu.hawaii.util.call.http.HttpMethod;
 import io.kahu.hawaii.util.call.http.HttpRequestBuilder;
-import io.kahu.hawaii.util.call.http.HttpRequestContext;
+import io.kahu.hawaii.util.call.http.HttpRequestConfiguration;
 import io.kahu.hawaii.util.call.log.CallLogger;
 import io.kahu.hawaii.util.call.log.CallLoggerImpl;
 import io.kahu.hawaii.util.call.log.request.HttpRequestLogger;
@@ -80,7 +80,7 @@ public class Example1 {
             /*
              * Setup the request (builder).
              */
-            HttpRequestContext<Person> context = new HttpRequestContext<>(HttpMethod.GET,
+            HttpRequestConfiguration<Person> context = new HttpRequestConfiguration<>(HttpMethod.GET,
                     "http://localhost:" + SERVER_PORT, "/customer/{customer-id}",
                     "crm", "get_customer_by_id",
                     new TimeOut(2, TimeUnit.SECONDS));

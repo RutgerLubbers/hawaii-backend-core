@@ -84,18 +84,18 @@ public class ExecutorRepository {
     }
 
     public <T> HawaiiExecutor getExecutor(AbortableRequest<T> request) {
-        RequestContext<T> context = request.getContext();
+        RequestConfiguration configuration = request.getConfiguration();
 
-        HawaiiExecutor executor = executors.get(context.getExecutorName());
+        HawaiiExecutor executor = executors.get(configuration.getExecutorName());
         if (executor == null) {
             // The configured (in the request) executor does not exist (or is empty).
             // Get the external configuration and add the configuration to the request
-            RequestConfiguration configuration = requestConfigurations.get(request.getCallName());
+            configuration = requestConfigurations.get(request.getCallName());
             executor = executors.get(configuration.getExecutorName());
 
             if (executor == null) {
                 // See if there is a default executor for the backend system.
-                String executorName = defaultExecutors.get(context.getBackendSystem());
+                String executorName = defaultExecutors.get(configuration.getRequestName().getSystem());
                 executor = executors.get(executorName);
 
                 if (executor == null) {
@@ -106,7 +106,7 @@ public class ExecutorRepository {
             }
 
             configuration.setExecutorName(executor.getName());
-            request.getContext().setConfiguration(configuration);
+            request.setConfiguration(configuration);
         }
 
         return executor;

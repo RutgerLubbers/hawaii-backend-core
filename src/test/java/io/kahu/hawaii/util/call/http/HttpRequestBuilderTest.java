@@ -37,7 +37,7 @@ public class HttpRequestBuilderTest {
 
     private RequestDispatcher requestDispatcher;
     private ResponseHandler<HttpResponse, String> responseHandler;
-    private HttpRequestContext<String> requestContext;
+    private HttpRequestConfiguration<String> requestContext;
     private CallLogger<String> logger;
     private HttpRequestBuilder<String> builderWithHeaderProvider;
     private HttpRequestBuilder<String> builderWithoutHeaderProvider;
@@ -47,7 +47,7 @@ public class HttpRequestBuilderTest {
     public void setUp() throws ServerException {
         requestDispatcher = mock(RequestDispatcher.class);
         responseHandler = mock(StringResponseHandler.class);
-        requestContext = new HttpRequestContext<>(HttpMethod.GET, "http://test.com", "/testUrl", "dynalean", "get_shop_locations", 1);
+        requestContext = new HttpRequestConfiguration<>(HttpMethod.GET, "http://test.com", "/testUrl", "dynalean", "get_shop_locations", 1);
         logger = mock(CallLogger.class);
 
         RequestPrototype<HttpResponse, String> prototype = new RequestPrototype<>(requestDispatcher, requestContext, responseHandler, logger);

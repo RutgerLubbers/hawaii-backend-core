@@ -15,27 +15,32 @@
  */
 package io.kahu.hawaii.util.call.http;
 
-import io.kahu.hawaii.util.call.RequestContext;
+import io.kahu.hawaii.util.call.RequestName;
 import io.kahu.hawaii.util.call.TimeOut;
+import io.kahu.hawaii.util.call.configuration.RequestConfiguration;
 
 import java.util.concurrent.TimeUnit;
 
-public class HttpRequestContext<T> extends RequestContext<T> {
+public class HttpRequestConfiguration<T> extends RequestConfiguration<T> {
     private final HttpMethod method;
     private String baseUrl;
     private String path;
 
     @Deprecated
-    public HttpRequestContext(HttpMethod method, String baseUrl, String path, String backendSystem, String methodName, int timeOut) {
+    public HttpRequestConfiguration(HttpMethod method, String baseUrl, String path, String backendSystem, String methodName, int timeOut) {
         this(method, baseUrl, path, backendSystem, methodName, new TimeOut(timeOut, TimeUnit.SECONDS));
     }
-    public HttpRequestContext(HttpMethod method, String baseUrl, String path, String backendSystem, String methodName, TimeOut timeOut) {
-        super(backendSystem, methodName, timeOut);
+    public HttpRequestConfiguration(HttpMethod method, String baseUrl, String path, String backendSystem, String methodName, TimeOut timeOut) {
+        this(method, baseUrl, path, new RequestName(backendSystem, methodName), timeOut);
+    }
+
+    public HttpRequestConfiguration(HttpMethod method, String baseUrl, String path, RequestName requestName, TimeOut timeOut) {
+        super(requestName);
+        setTimeOut(timeOut);
         this.method = method;
         this.baseUrl = baseUrl;
         this.path = path;
     }
-
     public String getBaseUrl() {
         return baseUrl;
     }

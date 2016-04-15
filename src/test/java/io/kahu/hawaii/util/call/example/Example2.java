@@ -27,7 +27,7 @@ import io.kahu.hawaii.util.call.example.handler.GetCustomerByIdResponseHandler;
 import io.kahu.hawaii.util.call.example.service.RestServer;
 import io.kahu.hawaii.util.call.http.HttpMethod;
 import io.kahu.hawaii.util.call.http.HttpRequestBuilder;
-import io.kahu.hawaii.util.call.http.HttpRequestContext;
+import io.kahu.hawaii.util.call.http.HttpRequestConfiguration;
 import io.kahu.hawaii.util.call.log.CallLogger;
 import io.kahu.hawaii.util.call.log.CallLoggerImpl;
 import io.kahu.hawaii.util.call.log.request.HttpRequestLogger;
@@ -91,7 +91,7 @@ public class Example2 {
             /*
              * Setup the request (builder).
              */
-            HttpRequestContext<Person> context = new HttpRequestContext<>(HttpMethod.GET, "http://localhost:" + SERVER_PORT, "/client/{client-id}", "crm", "get_client_by_id", new TimeOut(10, TimeUnit.SECONDS));
+            HttpRequestConfiguration<Person> context = new HttpRequestConfiguration<>(HttpMethod.GET, "http://localhost:" + SERVER_PORT, "/client/{client-id}", "crm", "get_client_by_id", new TimeOut(10, TimeUnit.SECONDS));
             CallLogger callLogger = new CallLoggerImpl<>(logManager, new HttpRequestLogger(), new JsonPayloadResponseLogger<Person>());
             RequestPrototype<HttpResponse, Person> prototype = new RequestPrototype(requestDispatcher, context, new GetCustomerByIdResponseHandler(), callLogger);
             HttpRequestBuilder<Person> getPersonByIdRequest = new HttpRequestBuilder<>(prototype);

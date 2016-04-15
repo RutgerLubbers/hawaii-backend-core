@@ -16,6 +16,7 @@
 package io.kahu.hawaii.util.call.http;
 
 import io.kahu.hawaii.util.call.*;
+import io.kahu.hawaii.util.call.configuration.RequestConfiguration;
 import io.kahu.hawaii.util.call.dispatch.RequestDispatcher;
 import io.kahu.hawaii.util.call.http.util.UriBuilder;
 import io.kahu.hawaii.util.call.log.CallLogger;
@@ -86,22 +87,22 @@ public class HttpRequestBuilder<T> implements RequestBuilder<T> {
     private Map<String, Object> payloads;
 
     @Deprecated
-    public HttpRequestBuilder(RequestDispatcher requestDispatcher, HttpRequestContext<T> requestContext, ResponseHandler<HttpResponse, T> responseHandler,
-            CallLogger<T> logger, HttpHeaderProvider httpHeaderProvider, HttpRequestCredentials credentials) throws ServerException {
+    public HttpRequestBuilder(RequestDispatcher requestDispatcher, HttpRequestConfiguration<T> requestContext, ResponseHandler<HttpResponse, T> responseHandler,
+                              CallLogger<T> logger, HttpHeaderProvider httpHeaderProvider, HttpRequestCredentials credentials) throws ServerException {
         this(requestDispatcher, requestContext, responseHandler, logger, httpHeaderProvider);
         this.credentials = credentials;
     }
 
     @Deprecated
-    public HttpRequestBuilder(RequestDispatcher requestDispatcher, HttpRequestContext<T> requestContext, ResponseHandler<HttpResponse, T> responseHandler,
-            CallLogger<T> logger, HttpHeaderProvider httpHeaderProvider) throws ServerException {
+    public HttpRequestBuilder(RequestDispatcher requestDispatcher, HttpRequestConfiguration<T> requestContext, ResponseHandler<HttpResponse, T> responseHandler,
+                              CallLogger<T> logger, HttpHeaderProvider httpHeaderProvider) throws ServerException {
         this(requestDispatcher, requestContext, responseHandler, logger);
         this.httpHeaderProvider = httpHeaderProvider;
     }
 
     @Deprecated
-    public HttpRequestBuilder(RequestDispatcher requestDispatcher, HttpRequestContext<T> requestContext, ResponseHandler<HttpResponse, T> responseHandler,
-            CallLogger<T> logger) throws ServerException {
+    public HttpRequestBuilder(RequestDispatcher requestDispatcher, HttpRequestConfiguration<T> requestContext, ResponseHandler<HttpResponse, T> responseHandler,
+                              CallLogger<T> logger) throws ServerException {
         this(new RequestPrototype<>(requestDispatcher, requestContext, responseHandler, logger));
     }
 
@@ -229,7 +230,7 @@ public class HttpRequestBuilder<T> implements RequestBuilder<T> {
         AbortableHttpRequest<T> request = null;
         URI uri = getUri();
 
-        HttpMethod method = getRequestContext().getMethod();
+        HttpMethod method = getRequestConfiguration().getMethod();
         switch (method) {
         case GET:
             // if payload != null throw exception?
@@ -308,12 +309,17 @@ public class HttpRequestBuilder<T> implements RequestBuilder<T> {
     }
 
     private URI getUri() throws ServerException {
-        return new UriBuilder().withBaseUrl(getRequestContext().getBaseUrl()).withPath(getRequestContext().getPath()).withPathVariables(pathVariables)
+        return new UriBuilder().withBaseUrl(getRequestConfiguration().getBaseUrl()).withPath(getRequestConfiguration().getPath()).withPathVariables(pathVariables)
                 .withQueryParameters(queryParameters).build();
     }
 
-    public HttpRequestContext<T> getRequestContext() {
-        return (HttpRequestContext<T>) prototype.getContext();
+    public HttpRequestConfiguration<T> getRequestConfiguration() {
+        return (HttpRequestConfiguration<T>) prototype.getConfiguration();
+    }
+
+    public void updateRequestConfiguration(RequestConfiguration<T> configuration) {
+        prototype.getConfiguration().setTimeOut(configuration.);
+        prototype.setConfiguration(configuration);
     }
 
     @Override
@@ -350,4 +356,7 @@ public class HttpRequestBuilder<T> implements RequestBuilder<T> {
         }
     }
 
+    public RequestName getRequestName() {
+        return getRequestConfiguration().getRequestName();
+    }
 }

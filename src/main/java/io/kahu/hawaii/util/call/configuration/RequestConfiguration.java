@@ -15,18 +15,24 @@
  */
 package io.kahu.hawaii.util.call.configuration;
 
-import io.kahu.hawaii.util.call.RequestContext;
+import io.kahu.hawaii.util.call.RequestName;
 import io.kahu.hawaii.util.call.TimeOut;
 import org.apache.http.annotation.NotThreadSafe;
 
 import java.util.concurrent.TimeUnit;
 
 @NotThreadSafe
-public class RequestConfiguration {
+public class RequestConfiguration<T> {
+    private RequestName requestName;
+    private T rejected;
+    private T aborted;
     private String executorName;
     private TimeOut defaultTimeOut = new TimeOut(10, TimeUnit.SECONDS);
     private TimeOut timeOut = null;
-    private RequestContext<?> context;
+
+    public RequestConfiguration(RequestName requestName) {
+        this.requestName = requestName;
+    }
 
     public String getExecutorName() {
         return executorName;
@@ -51,11 +57,31 @@ public class RequestConfiguration {
         return timeOut;
     }
 
-    public RequestContext<?> getContext() {
-        return context;
+    public RequestName getRequestName() {
+        return requestName;
     }
 
-    public void setContext(RequestContext<?> context) {
-        this.context = context;
+    public T getRejectResponse() {
+        return rejected;
     }
+
+    public void setRejectResponse(T rejected) {
+        this.rejected = rejected;
+    }
+
+    public T getTimeOutResponse() {
+        return aborted;
+    }
+
+    public void setTimeOutResponse(T aborted) {
+        this.aborted = aborted;
+    }
+
+    public void updateFrom(RequestConfiguration<T> configuration) {
+        this.setTimeOut(configuration.getTimeOut());
+        this.setExecutorName(configuration.getExecutorName());
+        this.setTimeOutResponse(configuration.getTimeOutResponse());
+        this.setRejectResponse(configuration.getRejectResponse());
+    }
+
 }

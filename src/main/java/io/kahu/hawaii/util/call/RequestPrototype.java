@@ -15,24 +15,27 @@
  */
 package io.kahu.hawaii.util.call;
 
+import io.kahu.hawaii.util.call.configuration.RequestConfiguration;
 import io.kahu.hawaii.util.call.dispatch.RequestDispatcher;
 import io.kahu.hawaii.util.call.log.CallLogger;
 
 public class RequestPrototype<F, T>  {
     private final RequestDispatcher requestDispatcher;
-    private final RequestContext<T> context;
     private ResponseHandler<F, T> responseHandler;
     private final CallLogger<T> logger;
 
-    public RequestPrototype(RequestDispatcher requestDispatcher, RequestContext<T> context, ResponseHandler<F, T> responseHandler, CallLogger<T> logger) {
+    private RequestConfiguration<T> configuration;
+
+    public RequestPrototype(RequestDispatcher requestDispatcher, RequestConfiguration<T> configuration, ResponseHandler<F, T> responseHandler, CallLogger<T> logger) {
         this.requestDispatcher = requestDispatcher;
-        this.context = context;
+        this.configuration = configuration;
         this.responseHandler = responseHandler;
         this.logger = logger;
+
     }
 
     public RequestPrototype(RequestPrototype<F, T> prototype) {
-        this(prototype.requestDispatcher, prototype.context, prototype.responseHandler, prototype.logger);
+        this(prototype.requestDispatcher, prototype.configuration, prototype.responseHandler, prototype.logger);
     }
 
     public RequestDispatcher getRequestDispatcher() {
@@ -47,8 +50,12 @@ public class RequestPrototype<F, T>  {
         return responseHandler;
     }
 
-    public RequestContext<T> getContext() {
-        return context;
+    public RequestConfiguration<T> getConfiguration() {
+        return configuration;
+    }
+
+    public void setConfiguration(RequestConfiguration<T> configuration) {
+        this.configuration = configuration;
     }
 
     public CallLogger<T> getLogger() {

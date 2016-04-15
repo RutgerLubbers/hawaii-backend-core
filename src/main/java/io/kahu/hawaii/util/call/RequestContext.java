@@ -47,7 +47,7 @@ public class RequestContext<T> {
     public RequestContext(String backendSystem, String methodName, TimeOut timeOut) {
         this.backendSystem = backendSystem;
         this.methodName = methodName;
-        configuration = new RequestConfiguration();
+        configuration = new RequestConfiguration(new RequestName(backendSystem, methodName));
         configuration.setTimeOut(timeOut);
     }
 
@@ -59,21 +59,6 @@ public class RequestContext<T> {
         return methodName;
     }
 
-    public T getRejectResponse() {
-        return rejected;
-    }
-
-    public void setRejectResponse(T rejected) {
-        this.rejected = rejected;
-    }
-
-    public T getTimeOutResponse() {
-        return aborted;
-    }
-
-    public void setAbortResponse(T aborted) {
-        this.aborted = aborted;
-    }
 
     public boolean is(String system, String method) {
         return this.backendSystem.equalsIgnoreCase(system) && this.methodName.equalsIgnoreCase(method);

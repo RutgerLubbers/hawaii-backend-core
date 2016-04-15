@@ -15,6 +15,7 @@
  */
 package io.kahu.hawaii.util.call;
 
+import io.kahu.hawaii.util.call.configuration.RequestConfiguration;
 import io.kahu.hawaii.util.call.statistics.QueueStatistic;
 import io.kahu.hawaii.util.call.statistics.RequestStatistic;
 
@@ -26,9 +27,10 @@ import java.util.concurrent.FutureTask;
  * @param <T>
  */
 public interface AbortableRequest<T> extends Request<T> {
-    TimeOut getTimeOut();
 
-    RequestContext<T> getContext();
+    RequestConfiguration<T> getConfiguration();
+
+    void setConfiguration(RequestConfiguration<T> configuration);
 
     void setQueueStatistic(QueueStatistic queueStatistic);
 

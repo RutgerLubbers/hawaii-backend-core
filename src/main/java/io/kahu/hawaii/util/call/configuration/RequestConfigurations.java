@@ -15,8 +15,9 @@
  */
 package io.kahu.hawaii.util.call.configuration;
 
+import io.kahu.hawaii.util.call.RequestName;
 import io.kahu.hawaii.util.call.TimeOut;
-import io.kahu.hawaii.util.call.http.HttpRequestContext;
+import io.kahu.hawaii.util.call.http.HttpRequestConfiguration;
 import org.jolokia.jmx.JsonMBean;
 
 import java.util.HashMap;
@@ -25,29 +26,27 @@ import java.util.concurrent.TimeUnit;
 
 @JsonMBean
 public class RequestConfigurations {
-    private final Map<String, RequestConfiguration> configurations = new HashMap<>();
+    private final Map<RequestName, RequestConfiguration> configurations = new HashMap<>();
 
-    public RequestConfiguration get(String key) {
+    public RequestConfiguration get(RequestName key) {
         RequestConfiguration configuration = configurations.get(key);
         if (configuration == null) {
-            configuration = new RequestConfiguration();
+            configuration = new RequestConfiguration(key);
             configurations.put(key, configuration);
         }
         return configuration;
     }
 
-    public void setTimeOut(String key, int timeOut) {
-        get(key).setTimeOut(new TimeOut(timeOut, TimeUnit.SECONDS));
+    public void setTimeOut(String system, String method, int timeOut) {
+        get(new RequestName(system, method)).setTimeOut(new TimeOut(timeOut, TimeUnit.SECONDS));
     }
 
-    public void setExecutorName(String key, String queue) {
-        get(key).setExecutorName(queue);
+    public void setExecutorName(String system, String method, String queue) {
+        get(new RequestName(system, method)).setExecutorName(queue);
     }
 
     public void changeUrl(String system, String method, String url) {
-        String key = system + "." + method;
-        RequestConfiguration configuration = get(key);
-        HttpRequestContext context = (HttpRequestContext) configuration.getContext();
-        context.setBaseUrl(url);
+        HttpRequestConfiguration configuration = (HttpRequestConfiguration) get(new RequestName(system, method));
+        configuration.setBaseUrl(url);
     }
 }
